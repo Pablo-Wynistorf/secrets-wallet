@@ -22,7 +22,11 @@ const client = new SSMClient({ region: 'eu-central-1' });
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
+
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 app.get('/', (req, res) => {
     const token = req.cookies.token;
@@ -32,11 +36,15 @@ app.get('/', (req, res) => {
     res.redirect('/welcome');
 });
 
+
+
 app.get('/api/create-wallet', async (req, res) => {
     const walletId = uuidv4();
     const token = jwt.sign({ uuid: walletId }, JWT_SECRET_KEY);
     res.redirect(`/wallet?token=${token}`);
 });
+
+
 
 app.get('/api/secrets', async (req, res) => {
     const token = req.headers.authorization;
@@ -87,7 +95,8 @@ app.get('/api/secrets', async (req, res) => {
     }
 });
 
-// New route to add parameters (secrets)
+
+
 app.post('/api/secrets', async (req, res) => {
     const token = req.headers.authorization;
     if (!token) {
@@ -135,7 +144,7 @@ app.post('/api/secrets', async (req, res) => {
 });
 
 
-// Delete parameters (secrets)
+
 app.delete('/api/secrets', async (req, res) => {
     const token = req.headers.authorization;
     if (!token) {
@@ -183,5 +192,7 @@ app.delete('/api/secrets', async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 export const handler = serverless(app);
