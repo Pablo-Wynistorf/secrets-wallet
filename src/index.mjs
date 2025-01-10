@@ -23,9 +23,22 @@ const client = new SSMClient({ region: 'eu-central-1' });
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 
+app.get('/wallet', (req, res) => {
+    const token = req.query.token;
+    if (!token) {
+        return res.redirect('/welcome');
+    }
+    res.sendFile(path.join(__dirname, 'public/wallet', 'index.html'));
+});
 
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/welcome', (req, res) => {
+    const token = req.query.token;
+    if (token) {
+        return res.redirect('/wallet?token=' + token);
+    }
+    res.sendFile(path.join(__dirname, 'public/welcome', 'index.html'));
+});
 
 
 app.get('/', (req, res) => {
@@ -37,13 +50,14 @@ app.get('/', (req, res) => {
 });
 
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get('/api/create-wallet', async (req, res) => {
     const walletId = uuidv4();
     const token = jwt.sign({ uuid: walletId }, JWT_SECRET_KEY);
     res.redirect(`/wallet?token=${token}`);
 });
-
 
 
 app.get('/api/secrets', async (req, res) => {
@@ -96,7 +110,6 @@ app.get('/api/secrets', async (req, res) => {
 });
 
 
-
 app.post('/api/secrets', async (req, res) => {
     const token = req.headers.authorization;
     if (!token) {
@@ -142,7 +155,6 @@ app.post('/api/secrets', async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 });
-
 
 
 app.delete('/api/secrets', async (req, res) => {
@@ -192,7 +204,6 @@ app.delete('/api/secrets', async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 });
-
 
 
 export const handler = serverless(app);
