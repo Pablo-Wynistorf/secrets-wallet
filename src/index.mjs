@@ -28,7 +28,7 @@ app.get('/wallet', (req, res) => {
     if (!token) {
         return res.redirect('/welcome');
     }
-    res.sendFile(path.join(__dirname, 'public/wallet', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public/wallet'));
 });
 
 
@@ -37,7 +37,7 @@ app.get('/welcome', (req, res) => {
     if (token) {
         return res.redirect('/wallet?token=' + token);
     }
-    res.sendFile(path.join(__dirname, 'public/welcome', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public/welcome'));
 });
 
 
