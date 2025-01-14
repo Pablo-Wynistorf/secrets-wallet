@@ -6,20 +6,118 @@
     <title>Welcome to Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="https://cdn.onedns.ch/a/1327208787324702771" type="image/jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.26);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            font-size: 30px;
+            padding: 30px 40px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            color: white;
+            background: linear-gradient(135deg, #a960ee, #ff333d, #90e0ff, #ffcb57);
+            background-size: 400% 400%;
+            animation: gradientAnimation 30s ease infinite;
+        }
+        .button:hover {
+            background-position: 100% 50%;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen flex justify-center items-center">
-
-    <div class="bg-white p-8 md:p-10 rounded-lg shadow-lg max-w-md w-full">
-        <h1 class="text-4xl font-extrabold text-center text-blue-600">Welcome to Your Wallet</h1>
-        <p class="text-center text-gray-700 mt-4">Start managing your secrets by creating a new wallet. Secure, simple, and reliable.</p>
+<body>
+    <div class="content">
+        <h1 class="text-4xl font-extrabold text-blue-600">Welcome to Your Wallet</h1>
+        <p class="text-gray-700 mt-4">Start managing your secrets by creating a new wallet. Secure, simple, and reliable.</p>
         
-        <div class="mt-8 text-center">
-            <a href="/api/create-wallet" 
-               class="inline-block w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg">
-               Create Wallet
-            </a>
+        <div class="mt-8">
+            <a href="/api/create-wallet" class="button">Create Wallet</a>
         </div>
     </div>
 
+    <script>
+        function randomColor() {
+            const colors = [
+                "#a960ee", // Light purple
+                "#ff333d", // Bright red
+                "#90e0ff", // Light blue
+                "#ffcb57", // Soft yellow
+                "#f45b69", // Soft coral
+                "#c8a2ff", // Lavender
+                "#ff8da1"  // Light pink
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function randomDirection() {
+            const directions = ['135deg', '45deg', '180deg', '90deg', '270deg', '120deg', '60deg'];
+            return directions[Math.floor(Math.random() * directions.length)];
+        }
+
+        function updateBackground() {
+            const color1 = randomColor();
+            const color2 = randomColor();
+            const color3 = randomColor();
+            const color4 = randomColor();
+            const direction = randomDirection();
+
+            document.body.style.background = `linear-gradient(${direction}, ${color1}, ${color2}, ${color3}, ${color4})`;
+            document.body.style.backgroundSize = '400% 400%';
+            document.body.style.animation = `gradientAnimation 30s ease infinite`;
+
+            // Apply a new random background every 30 seconds (duration of the animation cycle)
+            setTimeout(updateBackground, 30000);
+        }
+
+        // Initial call to set the background
+        updateBackground();
+
+        // Gradient Animation Keyframe
+        const styleSheet = document.styleSheets[0];
+        styleSheet.insertRule(`
+            @keyframes gradientAnimation {
+                0% { background-position: 0% 50%; }
+                25% { background-position: 50% 50%; }
+                50% { background-position: 100% 50%; }
+                75% { background-position: 50% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+        `, styleSheet.cssRules.length);
+    </script>
 </body>
 </html>
