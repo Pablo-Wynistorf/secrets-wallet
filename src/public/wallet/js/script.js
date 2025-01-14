@@ -55,12 +55,16 @@ function displaySecrets(secrets) {
             </div>
 
             <!-- Secret Description -->
-            <div class="mb-4">
-              <h3 class="text-lg font-bold text-blue-600">Description</h3>
-              <p 
-                class="text-gray-800 bg-white px-4 py-2 rounded-lg border shadow-sm max-h-40 overflow-y-auto whitespace-pre-line w-5/6"
-              >${secretDescription}</p>
-            </div>
+            ${
+              secretDescription
+                ? `<div class="mb-4">
+                    <h3 class="text-lg font-bold text-blue-600">Description</h3>
+                    <p 
+                      class="text-gray-800 bg-white px-4 py-2 rounded-lg border shadow-sm max-h-40 overflow-y-auto whitespace-pre-line w-5/6"
+                    >${secretDescription}</p>
+                  </div>`
+                : ""
+            }
 
             <!-- Delete Button -->
             <div class="flex justify-end">
@@ -82,7 +86,6 @@ function displaySecrets(secrets) {
       </div>`;
   }
 }
-
 
 
 // Toggle visibility of a secret
