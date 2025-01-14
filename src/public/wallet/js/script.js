@@ -139,7 +139,7 @@ async function fetchSecrets() {
     displaySecrets(data.secrets);
   } else {
     secretsList.innerHTML = `
-      <div class="p-4 bg-red-100 rounded-lg shadow-sm text-red-600">
+      <div class="p-4 bg-red-100 rounded-lg shadow-sm text-xl text-red-600">
         Failed to fetch secrets. Please try again.
       </div>`;
   }
