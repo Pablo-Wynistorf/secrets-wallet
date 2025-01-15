@@ -34,53 +34,35 @@
         }
       }
 
-      /* Apply the gradient animation */
-      .bg-animate {
-        animation: gradientAnimation 30s ease infinite;
-      }
-
-      /* Apply a background gradient to the body */
+      /* Animated gradient background */
       body {
         background: linear-gradient(45deg, #6a1b9a, #d32f2f, #fbc02d);
         background-size: 400% 400%;
         animation: gradientAnimation 30s ease infinite;
       }
-
-      /* Apply the animation to the modal background as well */
-      .bg-animate-modal {
-        animation: gradientAnimation 30s ease infinite;
-      }
     </style>
   </head>
   <body
-    class="font-sans bg-gradient-to-br from-purple-500 via-red-500 to-yellow-400 bg-animate min-h-screen flex flex-col items-center justify-center p-4"
+    class="font-sans min-h-screen flex flex-col items-center justify-center p-4"
   >
     <!-- Logout Button -->
     <button
-      class="fixed top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
+      class="absolute top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
       onclick="window.location.href = '/logout'"
     >
       Logout
     </button>
 
-    <!-- Share Button -->
-    <button
-      class="fixed top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
-      onclick="window.location.href = '/wallet'"
-    >
-      Back to Wallet
-    </button>
-
     <!-- Wallet Content -->
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-3xl">
-      <h1 class="text-5xl font-extrabold text-center text-blue-600">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center">
+      <h1 class="text-4xl font-extrabold text-blue-600 mb-6">
         Copy the Invitation Link
       </h1>
 
       <!-- Copy Invite Link Button -->
       <button
-        class="fixed bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
-        onclick="getInvitationLink()"
+        class="bg-blue-600 text-white px-6 py-4 rounded-full text-lg sm:text-2xl hover:bg-blue-700 transition duration-200 shadow-lg"
+        onclick="copyInvitationLink()"
       >
         Copy Link
       </button>
