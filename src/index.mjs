@@ -45,7 +45,20 @@ app.post('/invite-token', (req, res) => {
     if (!token) {
         return res.redirect('/welcome');
     }
-    res.json({ token });
+    const { permissions } = req.body;
+
+    if (!permissions) {
+        return res.status(400).send('Missing permissions in request body');
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
+
+    if (!decoded.permissions.includes('CRD')) {
+        return res.status(403).send('You are not allowed to invite friends');
+    }
+
+    const inviteToken = jwt.sign({ uuid: decoded.uuid, permissions }, JWT_SECRET_KEY);
+    res.json({ inviteToken });
 });
 
 
@@ -91,7 +104,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/create-wallet', async (req, res) => {
     const walletId = uuidv4();
-    const token = jwt.sign({ uuid: walletId, rights: "CRD" }, JWT_SECRET_KEY);
+    const token = jwt.sign({ uuid: walletId, permissions: "CRD" }, JWT_SECRET_KEY);
     res.cookie('token', token, { httpOnly: true, expires: new Date(253402300000000) });
     res.redirect('/wallet');
 });
@@ -106,9 +119,9 @@ app.get('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
-        const rights = decoded.rights;
+        const permissions = decoded.permissions;
 
-        if (!rights.includes('R')) {
+        if (!permissions.includes('R')) {
             return res.status(403).send('You are not allowed to read secrets');
         }
 
@@ -162,9 +175,9 @@ app.post('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
-        const rights = decoded.rights;
+        const permissions = decoded.permissions;
 
-        if (!rights.includes('C')) {
+        if (!permissions.includes('C')) {
             return res.status(403).send('You are not allowed to create secrets');
         }
 
@@ -219,9 +232,9 @@ app.delete('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
-        const rights = decoded.rights;
+        const permissions = decoded.permissions;
 
-        if (!rights.includes('D')) {
+        if (!permissions.includes('D')) {
             return res.status(403).send('You are not allowed to delete secrets');
         }
 
