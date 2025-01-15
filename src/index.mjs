@@ -32,6 +32,42 @@ app.get('/wallet', (req, res) => {
 });
 
 
+app.get('/invite', (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/welcome');
+    }
+    res.sendFile(path.join(__dirname, 'public/invite'));
+});
+
+app.post('/invite-token', (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/welcome');
+    }
+    res.json({ token });
+});
+
+
+app.get('/login', (req, res) => {
+    const token = req.query.token;
+    if (!token) {
+        return res.redirect('/welcome');
+    }
+    res.cookie('token', token, { httpOnly: true, expires: new Date(253402300000000) });
+    res.redirect('/wallet');
+});
+
+app.get('/logout', (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/welcome');
+    }
+    res.clearCookie('token');
+    res.redirect('/welcome');
+});
+
+
 app.get('/welcome', (req, res) => {
     const token = req.cookies.token;
     if (token) {

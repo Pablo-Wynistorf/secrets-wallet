@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secrets Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css"
+    />
+    <link
+      rel="icon"
+      href="https://cdn.onedns.ch/a/1327208787324702771"
+      type="image/jpg"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+    <style>
+      @keyframes gradientAnimation {
+        0% {
+          background-position: 0% 50%;
+        }
+        25% {
+          background-position: 50% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        75% {
+          background-position: 50% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Apply the gradient animation */
+      .bg-animate {
+        animation: gradientAnimation 30s ease infinite;
+      }
+
+      /* Apply a background gradient to the body */
+      body {
+        background: linear-gradient(45deg, #6a1b9a, #d32f2f, #fbc02d);
+        background-size: 400% 400%;
+        animation: gradientAnimation 30s ease infinite;
+      }
+
+      /* Apply the animation to the modal background as well */
+      .bg-animate-modal {
+        animation: gradientAnimation 30s ease infinite;
+      }
+    </style>
+  </head>
+  <body
+    class="font-sans bg-gradient-to-br from-purple-500 via-red-500 to-yellow-400 bg-animate min-h-screen flex flex-col items-center justify-center p-4"
+  >
+    <!-- Logout Button -->
+    <button
+      class="fixed top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
+      onclick="window.location.href = '/logout'"
+    >
+      Logout
+    </button>
+
+    <!-- Share Button -->
+    <button
+      class="fixed top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
+      onclick="window.location.href = '/wallet'"
+    >
+      Back to Wallet
+    </button>
+
+    <!-- Wallet Content -->
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-3xl">
+      <h1 class="text-5xl font-extrabold text-center text-blue-600">
+        Copy the Invitation Link
+      </h1>
+
+      <!-- Copy Invite Link Button -->
+      <button
+        class="fixed bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-3xl sm:px-8 sm:py-5 hover:bg-blue-700 transition duration-200 shadow-md"
+        onclick="getInvitationLink()"
+      >
+        Copy Link
+      </button>
+
+      <div id="secrets-list" class="mt-8 space-y-6"></div>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
