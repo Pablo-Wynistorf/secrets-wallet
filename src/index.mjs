@@ -24,7 +24,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 
 app.get('/wallet', (req, res) => {
-    const token = req.query.token;
+    const token = req.cookies.token;
     if (!token) {
         return res.redirect('/welcome');
     }
@@ -33,9 +33,9 @@ app.get('/wallet', (req, res) => {
 
 
 app.get('/welcome', (req, res) => {
-    const token = req.query.token;
+    const token = req.cookies.token;
     if (token) {
-        return res.redirect('/wallet?token=' + token);
+        return res.redirect('/wallet');
     }
     res.sendFile(path.join(__dirname, 'public/welcome'));
 });
@@ -44,7 +44,7 @@ app.get('/welcome', (req, res) => {
 app.get('/', (req, res) => {
     const token = req.cookies.token;
     if (token) {
-        return res.redirect('/wallet?token=' + token);
+        return res.redirect('/wallet');
     }
     res.redirect('/welcome');
 });
@@ -56,12 +56,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/api/create-wallet', async (req, res) => {
     const walletId = uuidv4();
     const token = jwt.sign({ uuid: walletId }, JWT_SECRET_KEY);
-    res.redirect(`/wallet?token=${token}`);
+    res.cookie('token', token, { httpOnly: true, expires: new Date(253402300000000) });
+    res.redirect('/wallet');
 });
 
 
 app.get('/api/secrets', async (req, res) => {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
     if (!token) {
         return res.status(401).send('Unauthorized');
     }
@@ -111,7 +112,7 @@ app.get('/api/secrets', async (req, res) => {
 
 
 app.post('/api/secrets', async (req, res) => {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
     if (!token) {
         return res.status(401).send('Unauthorized');
     }
@@ -158,7 +159,7 @@ app.post('/api/secrets', async (req, res) => {
 
 
 app.delete('/api/secrets', async (req, res) => {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
     if (!token) {
         return res.status(401).send('Unauthorized');
     }
