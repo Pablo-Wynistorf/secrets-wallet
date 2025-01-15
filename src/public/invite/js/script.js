@@ -29,12 +29,11 @@ function copyInvitationLink() {
       });
     })
     .catch((error) => {
-      console.error("Error:", error);
       new Noty({
         type: "error",
         layout: "topLeft",
         theme: "metroui",
-        text: "Failed to copy the link. Please try again.",
+        text: error,
         timeout: 3000,
       }).show();
     });

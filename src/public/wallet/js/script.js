@@ -201,25 +201,34 @@ async function deleteSecret(secretToDelete) {
       }
 
       hideDeleteModal();
-      confirmDeleteBtn.disabled = false;
-      confirmDeleteBtn.textContent = "Delete";
     } else {
       const errorData = await response.json();
-      console.error("Error deleting secret:", errorData);
-      alert("Failed to delete secret. Please try again.");
-      confirmDeleteBtn.disabled = false;
-      confirmDeleteBtn.textContent = "Delete";
+      const errorMessage = errorData.message || "Failed to delete secret. Please try again.";
+      new Noty({
+        type: "error",
+        layout: "topLeft",
+        theme: "metroui",
+        text: errorMessage,
+        timeout: 3000,
+      }).show();
     }
   } catch (error) {
     console.error("Network or server error:", error);
-    alert("An error occurred while deleting the secret. Please try again.");
+    new Noty({
+      type: "error",
+      layout: "topLeft",
+      theme: "metroui",
+      text: "An error occurred while deleting the secret. Please try again.",
+      timeout: 3000,
+    }).show();
+  } finally {
     confirmDeleteBtn.disabled = false;
     confirmDeleteBtn.textContent = "Delete";
   }
 }
 
 
-// Event Listeners
+
 addSecretForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -233,34 +242,48 @@ addSecretForm.addEventListener("submit", async (event) => {
   secretValueInput.value = "";
   secretDescriptionInput.value = "";
 
-  const response = await fetch("/api/secrets", {
-    method: "POST",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ secretName, secretValue, secretDescription }),
-  });
+  try {
+    const response = await fetch("/api/secrets", {
+      method: "POST",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ secretName, secretValue, secretDescription }),
+    });
 
-  if (response.ok) {
-    new Noty({
-      type: "success",
-      layout: "topLeft",
-      theme: "metroui",
-      text: "Secret added successfully!",
-      timeout: 3000,
-    }).show();
-    setTimeout(fetchSecrets, 2000);
-  } else {
+    if (response.ok) {
+      new Noty({
+        type: "success",
+        layout: "topLeft",
+        theme: "metroui",
+        text: "Secret added successfully!",
+        timeout: 3000,
+      }).show();
+      setTimeout(fetchSecrets, 2000);
+    } else {
+      const errorData = await response.json();
+      const errorMessage = errorData.message || "Secret addition failed. Please try again.";
+      new Noty({
+        type: "error",
+        layout: "topLeft",
+        theme: "metroui",
+        text: errorMessage,
+        timeout: 3000,
+      }).show();
+    }
+  } catch (error) {
+    console.error("Network or server error:", error);
     new Noty({
       type: "error",
       layout: "topLeft",
       theme: "metroui",
-      text: "Secret addition failed. Please try again.",
+      text: "An error occurred. Please check your network connection.",
       timeout: 3000,
     }).show();
   }
 });
+
 
 addSecretBtn.addEventListener("click", () =>
   addModal.classList.remove("hidden")
