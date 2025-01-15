@@ -91,7 +91,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/create-wallet', async (req, res) => {
     const walletId = uuidv4();
-    const token = jwt.sign({ uuid: walletId }, JWT_SECRET_KEY);
+    const token = jwt.sign({ uuid: walletId, rights: "CRD" }, JWT_SECRET_KEY);
     res.cookie('token', token, { httpOnly: true, expires: new Date(253402300000000) });
     res.redirect('/wallet');
 });
@@ -106,6 +106,12 @@ app.get('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
+        const rights = decoded.rights;
+
+        if (!rights.includes('R')) {
+            return res.status(403).send('You are not allowed to read secrets');
+        }
+
         const parameterPrefix = `/valueStore/${uuid}`;
 
         const describeCommand = new DescribeParametersCommand({
@@ -156,6 +162,11 @@ app.post('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
+        const rights = decoded.rights;
+
+        if (!rights.includes('C')) {
+            return res.status(403).send('You are not allowed to create secrets');
+        }
 
         const { secretName, secretValue, secretDescription = '' } = req.body;
 
@@ -208,6 +219,11 @@ app.delete('/api/secrets', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY);
         const uuid = decoded.uuid;
+        const rights = decoded.rights;
+
+        if (!rights.includes('D')) {
+            return res.status(403).send('You are not allowed to delete secrets');
+        }
 
         const fullParameterName = `/valueStore/${uuid}/${secretId}`;
 
@@ -219,8 +235,6 @@ app.delete('/api/secrets', async (req, res) => {
         }
 
         const parameterData = JSON.parse(parameterResponse.Parameter.Value);
-
-        console.log('Updating parameter:', parameterData);
 
         const putParameterCommand = new PutParameterCommand({
             Name: fullParameterName,
