@@ -54,6 +54,10 @@ app.post('/invite-token', (req, res) => {
             return res.status(400).json({ error: 'Invalid or missing permissions in request body.' });
         }
 
+        if (!permissions.includes('R') && !permissions.includes('CR') && !permissions.includes('CRD')) {
+            return res.status(400).json({ error: 'Invalid permissions. Please specify either R, CR or CRD.' });
+        }        
+
         let decoded;
         try {
             decoded = jwt.verify(token, JWT_SECRET_KEY);
@@ -138,7 +142,7 @@ app.get('/api/secrets', async (req, res) => {
         const permissions = decoded.permissions;
 
         if (!permissions.includes('R')) {
-            return res.status(403).json({ error: 'You are not allowed to read secrets' });
+            return res.status(403).json({ error: 'You are not allowed to read secrets', text: permissions });
         }
 
         const parameterPrefix = `/valueStore/${uuid}`;

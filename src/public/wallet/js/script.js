@@ -88,7 +88,6 @@ function displaySecrets(secrets) {
 }
 
 
-// Toggle visibility of a secret
 function toggleSecret(secretId) {
   const secretValueElement = document.getElementById(`secret-value-${secretId}`);
   const eyeIcon = document.getElementById(`eye-icon-${secretId}`);
@@ -108,21 +107,13 @@ function toggleSecret(secretId) {
 }
 
 
-
-// Copy secret value to clipboard
 function copySecretValue(secretValue, secretId) {
   const copyIcon = document.getElementById(`copy-icon-${secretId}`);
   navigator.clipboard
     .writeText(secretValue)
     .then(() => {
       copyIcon.src = "svg/copy-success.svg";
-      new Noty({
-        type: "success",
-        layout: "topLeft",
-        theme: "metroui",
-        text: "Secret copied to clipboard!",
-        timeout: 2000,
-      }).show();
+      displaySuccessMessage("Secret copied to clipboard!");
       setTimeout(() => {
         copyIcon.src = "svg/copy.svg";
       }, 2000);
@@ -130,7 +121,7 @@ function copySecretValue(secretValue, secretId) {
     .catch((err) => console.error("Failed to copy text: ", err));
 }
 
-// Fetch secrets
+
 async function fetchSecrets() {
   const response = await fetch("/api/secrets", {
     method: "GET",
@@ -148,7 +139,7 @@ async function fetchSecrets() {
   }
 }
 
-// Show Delete Modal
+
 function showDeleteModal(secretId) {
   secretToDelete = secretId;
   confirmDeleteBtn.removeEventListener("click", handleDelete);
@@ -156,17 +147,18 @@ function showDeleteModal(secretId) {
   deleteModal.classList.remove("hidden");
 }
 
+
 function handleDelete() {
   deleteSecret(secretToDelete);
 }
 
-// Hide Delete Modal
+
 function hideDeleteModal() {
   deleteModal.classList.add("hidden");
   secretToDelete = null;
 }
 
-// Delete Secret
+
 async function deleteSecret(secretToDelete) {
   if (!secretToDelete) {
     alert("No secret selected for deletion.");
@@ -187,13 +179,7 @@ async function deleteSecret(secretToDelete) {
     });
 
     if (response.ok) {
-      new Noty({
-        type: "success",
-        layout: "topLeft",
-        theme: "metroui",
-        text: "Secret deleted successfully!",
-        timeout: 3000,
-      }).show();
+      displaySuccessMessage("Secret deleted successfully!");
 
       const secretElement = document.getElementById(secretToDelete);
       if (secretElement) {
@@ -203,24 +189,11 @@ async function deleteSecret(secretToDelete) {
       hideDeleteModal();
     } else {
       const errorData = await response.json();
-      const errorMessage = errorData.message || "Failed to delete secret. Please try again.";
-      new Noty({
-        type: "error",
-        layout: "topLeft",
-        theme: "metroui",
-        text: errorMessage,
-        timeout: 3000,
-      }).show();
+      const errorMessage = errorData.error || "Failed to delete secret. Please try again.";
+      displayErrorMessage(errorMessage);
     }
   } catch (error) {
-    console.error("Network or server error:", error);
-    new Noty({
-      type: "error",
-      layout: "topLeft",
-      theme: "metroui",
-      text: "An error occurred while deleting the secret. Please try again.",
-      timeout: 3000,
-    }).show();
+    displayErrorMessage("An error occurred. Please check your network connection.");
   } finally {
     confirmDeleteBtn.disabled = false;
     confirmDeleteBtn.textContent = "Delete";
@@ -253,34 +226,15 @@ addSecretForm.addEventListener("submit", async (event) => {
     });
 
     if (response.ok) {
-      new Noty({
-        type: "success",
-        layout: "topLeft",
-        theme: "metroui",
-        text: "Secret added successfully!",
-        timeout: 3000,
-      }).show();
+      displaySuccessMessage("Secret added successfully!");
       setTimeout(fetchSecrets, 2000);
     } else {
       const errorData = await response.json();
-      const errorMessage = errorData.message || "Secret addition failed. Please try again.";
-      new Noty({
-        type: "error",
-        layout: "topLeft",
-        theme: "metroui",
-        text: errorMessage,
-        timeout: 3000,
-      }).show();
+      const errorMessage = errorData.error || "Secret addition failed. Please try again.";
+      displayErrorMessage(errorMessage);
     }
   } catch (error) {
-    console.error("Network or server error:", error);
-    new Noty({
-      type: "error",
-      layout: "topLeft",
-      theme: "metroui",
-      text: "An error occurred. Please check your network connection.",
-      timeout: 3000,
-    }).show();
+    displayErrorMessage("An error occurred. Please check your network connection.");
   }
 });
 
