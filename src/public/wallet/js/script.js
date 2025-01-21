@@ -37,7 +37,7 @@ function displaySecrets(secrets) {
             </div>
 
             <!-- Secret Value -->
-            <div class="mb-4">
+            <div class="mb-4 relative">
               <h3 class="text-lg font-bold text-blue-600">Secret Value</h3>
               <p 
                 id="secret-value-${secret.secretId}" 
@@ -64,17 +64,16 @@ function displaySecrets(secrets) {
                   secret.secretId
                 }" src="svg/copy.svg" alt="Copy" class="w-6 h-6">
               </button>
-            </div>
-
-            <!-- Secret Description -->
-            ${
+            </div>${
               secretDescription
-                ? `<div class="mb-4">
-                    <h3 class="text-lg font-bold text-blue-600">Description</h3>
-                    <p 
-                      class="text-gray-800 bg-white px-4 py-2 rounded-lg border shadow-sm max-h-40 overflow-y-auto whitespace-pre-line w-5/6"
-                    >${secretDescription}</p>
-                  </div>`
+                ? `
+              <div class="mb-4">
+                <h3 class="text-lg font-bold text-blue-600">Description</h3>
+                <p class="text-gray-800 bg-white px-4 py-2 rounded-lg border shadow-sm max-h-40 overflow-y-auto whitespace-pre-line w-5/6">
+                  ${secretDescription}
+                </p>
+              </div>
+            `
                 : ""
             }
 
@@ -95,7 +94,8 @@ function displaySecrets(secrets) {
     secretsList.innerHTML = `
       <div class="p-6 bg-gray-100 rounded-lg shadow-md text-center">
         <p class="text-gray-700 text-lg">No secrets found.</p>
-      </div>`;
+      </div>
+    `;
   }
 }
 
@@ -109,7 +109,6 @@ function filterSecrets() {
 
   displaySecrets(filteredSecrets);
 }
-
 
 function toggleSecret(secretId) {
   const secretValueElement = document.getElementById(
