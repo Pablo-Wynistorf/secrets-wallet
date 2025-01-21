@@ -15,6 +15,7 @@
       type="image/jpg"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
     <style>
       @keyframes gradientAnimation {
         0% {
@@ -87,9 +88,15 @@
         Copy Link
       </button>
 
-      <div id="secrets-list" class="mt-8 space-y-6"></div>
+      <div id="qrCodeContainer" class="hidden mt-4">
+        <h2 class="text-2xl font-bold text-blue-600 mb-4">Or Scan QR Code on your phone</h2>
+        <div id="qrcode" class="flex justify-center"></div>
+      </div>
     </div>
-
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+    ></script>
     <script src="js/script.js"></script>
   </body>
 </html>

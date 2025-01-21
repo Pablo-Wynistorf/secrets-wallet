@@ -2,7 +2,9 @@ function copyInvitationLink() {
   const permissions = document.getElementById("permissions").value;
 
   if (!permissions || permissions.trim() === "") {
-    return displayErrorMessage("Permissions cannot be empty. Please specify at least one permission.");
+    return displayErrorMessage(
+      "Permissions cannot be empty. Please specify at least one permission."
+    );
   }
 
   fetch("/invite-token", {
@@ -26,11 +28,20 @@ function copyInvitationLink() {
 
       return navigator.clipboard.writeText(link).then(() => {
         displaySuccessMessage("Link copied to clipboard!");
+        showQRCode(link);
       });
     })
     .catch((error) => {
       displayErrorMessage(error.message || "An unexpected error occurred.");
     });
+}
+
+function showQRCode(url) {
+  const qrCodeContainer = document.getElementById("qrCodeContainer");
+
+  qrCodeContainer.classList.remove("hidden");
+
+  new QRCode(document.getElementById("qrcode"), url);
 }
 
 function displaySuccessMessage(message) {
