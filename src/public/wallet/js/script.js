@@ -5,6 +5,9 @@ const secretNameInput = document.getElementById("secret-name");
 const secretValueInput = document.getElementById("secret-value");
 const secretDescriptionInput = document.getElementById("secret-description");
 const addSecretBtn = document.getElementById("add-secret-btn");
+const exportSecretsBtn = document.getElementById("export-secrets-btn");
+const importSecretsBtn = document.getElementById("import-secrets-btn");
+const importFileInput = document.getElementById("import-file-input");
 const addModal = document.getElementById("add-secret-modal");
 const closeAddModalBtn = document.getElementById("close-modal-btn");
 const deleteModal = document.getElementById("delete-secret-modal");
@@ -121,7 +124,7 @@ function copySecretValue(secretValue, secretId) {
     .catch((err) => console.error("Failed to copy text: ", err));
 }
 
-
+let secrets;
 async function fetchSecrets() {
   const response = await fetch("/api/secrets", {
     method: "GET",
@@ -130,6 +133,7 @@ async function fetchSecrets() {
   if (response.ok) {
     const data = await response.json();
     spinner.classList.add("hidden");
+    secrets = data.secrets;
     displaySecrets(data.secrets);
   } else {
     secretsList.innerHTML = `
@@ -201,6 +205,65 @@ async function deleteSecret(secretToDelete) {
 }
 
 
+exportSecretsBtn.addEventListener("click", () => {
+  const secretsToExport = secrets.map((secret) => {
+    const { secretName, secretValue, secretDescription } = secret.secretValue;
+    return { secretName, secretValue, secretDescription };
+  });
+
+  const data = new Blob([JSON.stringify(secretsToExport)], { type: "application/json" });
+  const url = URL.createObjectURL(data);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "secrets.json";
+  a.click();
+  
+  displaySuccessMessage("Secrets exported successfully!");
+});
+
+importSecretsBtn.addEventListener("click", () => {
+  importFileInput.click();
+});
+
+importFileInput.addEventListener("change", async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    const secretsToImport = JSON.parse(event.target.result);
+
+    try {
+      for (const secret of secretsToImport) {
+        const { secretName, secretValue, secretDescription } = secret;
+
+        const response = await fetch("/api/secrets", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ secretName, secretValue, secretDescription }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || "Failed to import secret. Please try again.";
+          displayErrorMessage(errorMessage);
+          return;
+        }
+      }
+
+      displaySuccessMessage("Secrets imported successfully!");
+      setTimeout(fetchSecrets, 2000);
+    } catch (error) {
+      displayErrorMessage("An error occurred. Please check your network connection.");
+    }
+  };
+
+  reader.readAsText(file);
+  event.target.value = null;
+});
+
 
 addSecretForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -219,7 +282,6 @@ addSecretForm.addEventListener("submit", async (event) => {
     const response = await fetch("/api/secrets", {
       method: "POST",
       headers: {
-        Authorization: token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ secretName, secretValue, secretDescription }),

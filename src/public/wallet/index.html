@@ -57,7 +57,7 @@
   >
     <!-- Logout Button -->
     <button
-      class="absolute top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
+      class="fixed top-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
       onclick="window.location.href = '/logout'"
     >
       Logout
@@ -66,14 +66,37 @@
     <!-- Add Secret Button -->
     <button
       id="add-secret-btn"
-      class="absolute top-6 right-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
+      class="fixed top-6 right-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
     >
       Add Secret
     </button>
 
+    <!-- Export And Import Button -->
+    <div class="fixed bottom-6 right-6">
+      <button
+        id="export-secrets-btn"
+        class="bg-blue-600 text-white px-4 py-3 rounded-l-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
+      >
+        Export secrets
+      </button>
+      <button
+        id="import-secrets-btn"
+        class="bg-blue-600 text-white px-4 py-3 rounded-r-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
+      >
+        Import secrets
+      </button>
+      <!-- Hidden file input for import -->
+      <input
+        type="file"
+        id="import-file-input"
+        accept=".json"
+        style="display: none"
+      />
+    </div>
+
     <!-- Share Button -->
     <button
-      class="absolute bottom-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
+      class="fixed bottom-6 left-6 bg-blue-600 text-white px-4 py-3 rounded-full text-lg sm:text-xl hover:bg-blue-700 transition duration-200 shadow-md"
       onclick="window.location.href = '/invite'"
     >
       Invite Friends to Wallet
