@@ -200,6 +200,8 @@ async function deleteSecret(secretToDelete) {
         secretElement.remove();
       }
 
+      secrets = secrets.filter((secret) => secret.secretId !== secretToDelete);
+
       hideDeleteModal();
     } else {
       const errorData = await response.json();
