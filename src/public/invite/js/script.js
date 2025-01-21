@@ -28,6 +28,7 @@ function copyInvitationLink() {
 
       return navigator.clipboard.writeText(link).then(() => {
         document.getElementById("copyLinkBtn").textContent = "Copied!";
+        document.getElementById("copyLinkBtn").disabled = true;
         displaySuccessMessage("Link copied to clipboard!");
         showQRCode(link);
       });
@@ -36,6 +37,12 @@ function copyInvitationLink() {
       displayErrorMessage(error.message || "An unexpected error occurred.");
     });
 }
+
+document.getElementById("permissions").addEventListener("input", () => {
+  document.getElementById("copyLinkBtn").textContent = "Copy Link";
+  document.getElementById("copyLinkBtn").disabled = false;
+  document.getElementById("qrCodeContainer").classList.add("hidden");
+});
 
 function showQRCode(url) {
   document.getElementById("qrcode").innerHTML = "";
