@@ -285,6 +285,28 @@ addSecretForm.addEventListener("submit", async (event) => {
 });
 
 
+function displaySuccessMessage(message) {
+  new Noty({
+    type: "success",
+    layout: "topLeft",
+    theme: "metroui",
+    text: message,
+    timeout: 2000,
+  }).show();
+}
+
+function displayErrorMessage(error) {
+  new Noty({
+    type: "error",
+    layout: "topLeft",
+    theme: "metroui",
+    text: error,
+    timeout: 3000,
+  }).show();
+}
+
+
+
 addSecretBtn.addEventListener("click", () =>
   addModal.classList.remove("hidden")
 );

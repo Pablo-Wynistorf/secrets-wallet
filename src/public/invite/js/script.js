@@ -1,6 +1,10 @@
 function copyInvitationLink() {
   const permissions = document.getElementById("permissions").value;
 
+  if (!permissions || permissions.trim() === "") {
+    return displayErrorMessage("Permissions cannot be empty. Please specify at least one permission.");
+  }
+
   fetch("/invite-token", {
     method: "POST",
     credentials: "include",
@@ -9,32 +13,42 @@ function copyInvitationLink() {
     },
     body: JSON.stringify({ permissions: permissions }),
   })
-    .then((response) => {
+    .then(async (response) => {
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to fetch the invitation link.");
+        throw new Error(data.error || "An unexpected error occurred.");
       }
-      return response.json();
+      return data;
     })
     .then((data) => {
       const link = `${location.origin}/login?token=${data.inviteToken}`;
 
       return navigator.clipboard.writeText(link).then(() => {
-        new Noty({
-          type: "success",
-          layout: "topLeft",
-          theme: "metroui",
-          text: "Link copied to clipboard!",
-          timeout: 2000,
-        }).show();
+        displaySuccessMessage("Link copied to clipboard!");
       });
     })
     .catch((error) => {
-      new Noty({
-        type: "error",
-        layout: "topLeft",
-        theme: "metroui",
-        text: error,
-        timeout: 3000,
-      }).show();
+      displayErrorMessage(error.message || "An unexpected error occurred.");
     });
+}
+
+function displaySuccessMessage(message) {
+  new Noty({
+    type: "success",
+    layout: "topLeft",
+    theme: "metroui",
+    text: message,
+    timeout: 2000,
+  }).show();
+}
+
+function displayErrorMessage(error) {
+  new Noty({
+    type: "error",
+    layout: "topLeft",
+    theme: "metroui",
+    text: error,
+    timeout: 3000,
+  }).show();
 }

@@ -41,24 +41,40 @@ app.get('/invite', (req, res) => {
 });
 
 app.post('/invite-token', (req, res) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.redirect('/welcome');
+    try {
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(401).json({ error: 'Authentication required. Please log in.' });
+        }
+
+        const { permissions } = req.body;
+
+        if (!permissions) {
+            return res.status(400).json({ error: 'Invalid or missing permissions in request body.' });
+        }
+
+        let decoded;
+        try {
+            decoded = jwt.verify(token, JWT_SECRET_KEY);
+        } catch (err) {
+            return res.status(401).json({ error: 'Invalid token. Please log in again.' });
+        }
+
+        if (!decoded.permissions.includes('CRD')) {
+            return res.status(403).json({ error: 'You are not allowed to invite users.' });
+        }
+
+        const inviteToken = jwt.sign(
+            { uuid: decoded.uuid, permissions },
+            JWT_SECRET_KEY,
+        );
+        return res.status(200).json({ inviteToken });
+
+    } catch (error) {
+        console.error('Error processing /invite-token:', error);
+        return res.status(500).json({ error: 'An unexpected error occurred. Please try again later.' });
     }
-    const { permissions } = req.body;
-
-    if (!permissions) {
-        return res.status(400).send('Missing permissions in request body');
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET_KEY);
-
-    if (!decoded.permissions.includes('CRD')) {
-        return res.status(403).send('You are not allowed to invite friends');
-    }
-
-    const inviteToken = jwt.sign({ uuid: decoded.uuid, permissions }, JWT_SECRET_KEY);
-    res.json({ inviteToken });
 });
 
 
@@ -113,7 +129,7 @@ app.get('/api/create-wallet', async (req, res) => {
 app.get('/api/secrets', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).json({ error: 'Unauthorized' });
     }
 
     try {
@@ -122,7 +138,7 @@ app.get('/api/secrets', async (req, res) => {
         const permissions = decoded.permissions;
 
         if (!permissions.includes('R')) {
-            return res.status(403).send('You are not allowed to read secrets');
+            return res.status(403).json({ error: 'You are not allowed to read secrets' });
         }
 
         const parameterPrefix = `/valueStore/${uuid}`;
@@ -161,7 +177,7 @@ app.get('/api/secrets', async (req, res) => {
         return res.json({ secrets: activeSecrets });
     } catch (error) {
         console.error('Error fetching secrets:', error);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -169,7 +185,7 @@ app.get('/api/secrets', async (req, res) => {
 app.post('/api/secrets', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).json({ error: 'Unauthorized' });
     }
 
     try {
@@ -178,19 +194,19 @@ app.post('/api/secrets', async (req, res) => {
         const permissions = decoded.permissions;
 
         if (!permissions.includes('C')) {
-            return res.status(403).send('You are not allowed to create secrets');
+            return res.status(403).json({ error: 'You are not allowed to create secrets' });
         }
 
         const { secretName, secretValue, secretDescription = '' } = req.body;
 
         if (!secretName || !secretValue) {
-            return res.status(400).send('Missing secretName or secretValue');
+            return res.status(400).json({ error: 'Missing secretName or secretValue in request body' });
         }
 
         const totalLength = secretName.length + secretValue.length + secretDescription.length;
 
         if (totalLength > 4039) {
-            return res.status(400).send('The combined length of secretName, secretValue, and secretDescription cannot exceed 4039 characters');
+            return res.status(400).json({ error: 'Total length of secretName, secretValue, and secretDescription must be less than 4039 characters' });
         }
 
         const parameterPrefix = `/valueStore/${uuid}`;
@@ -210,10 +226,10 @@ app.post('/api/secrets', async (req, res) => {
 
         await client.send(putParameterCommand);
 
-        return res.status(201).send('Secret added successfully');
+        return res.status(200).json({ success: 'Successfully added secret' });
     } catch (error) {
         console.error('Error adding secret:', error);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -221,12 +237,12 @@ app.post('/api/secrets', async (req, res) => {
 app.delete('/api/secrets', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).json({ error: 'Unauthorized' });
     }
     const { secretId } = req.body;
 
     if (!secretId) {
-        return res.status(400).send('Missing secretId in request body');
+        return res.status(400).json({ error: 'Missing secretId in request body' });
     }
 
     try {
@@ -235,7 +251,7 @@ app.delete('/api/secrets', async (req, res) => {
         const permissions = decoded.permissions;
 
         if (!permissions.includes('D')) {
-            return res.status(403).send('You are not allowed to delete secrets');
+            return res.status(403).json({ error: 'You are not allowed to delete secrets' });
         }
 
         const fullParameterName = `/valueStore/${uuid}/${secretId}`;
@@ -244,7 +260,7 @@ app.delete('/api/secrets', async (req, res) => {
         const parameterResponse = await client.send(getParameterCommand);
 
         if (!parameterResponse.Parameter) {
-            return res.status(404).send('Parameter not found');
+            return res.status(404).json({ error: 'Secret not found' });
         }
 
         const parameterData = JSON.parse(parameterResponse.Parameter.Value);
@@ -262,10 +278,10 @@ app.delete('/api/secrets', async (req, res) => {
         const deleteParameterCommand = new DeleteParameterCommand({ Name: fullParameterName });
         await client.send(deleteParameterCommand);
 
-        return res.status(200).send('Parameter marked for deletion');
+        return res.status(200).json({ success: 'Successfully deleted secret' });
     } catch (error) {
         console.error('Error deleting parameter:', error);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
