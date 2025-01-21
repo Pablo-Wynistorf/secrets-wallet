@@ -27,6 +27,7 @@ function copyInvitationLink() {
       const link = `${location.origin}/login?token=${data.inviteToken}`;
 
       return navigator.clipboard.writeText(link).then(() => {
+        document.getElementById("copyLinkBtn").textContent = "Copied!";
         displaySuccessMessage("Link copied to clipboard!");
         showQRCode(link);
       });
@@ -37,10 +38,9 @@ function copyInvitationLink() {
 }
 
 function showQRCode(url) {
+  document.getElementById("qrcode").innerHTML = "";
   const qrCodeContainer = document.getElementById("qrCodeContainer");
-
   qrCodeContainer.classList.remove("hidden");
-
   new QRCode(document.getElementById("qrcode"), url);
 }
 
