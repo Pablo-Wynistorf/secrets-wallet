@@ -112,26 +112,29 @@
       </p>
 
       <div class="w-full max-w-3xl mt-3 mb-6">
-        <input type="text" id="search-bar" 
-               class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-full focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all duration-300" 
-               placeholder="Search by name or description..." 
-               onkeyup="filterSecrets()">
-    </div>
+        <input
+          type="text"
+          id="search-bar"
+          class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-full focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all duration-300"
+          placeholder="Search by name or description..."
+          onkeyup="filterSecrets()"
+        />
 
-      <div id="spinner" class="flex items-center justify-center mt-8">
-        <div class="relative w-12 h-12">
-          <!-- Outer circle -->
-          <div
-            class="absolute inset-0 border-4 border-blue-600 rounded-full opacity-25"
-          ></div>
-          <!-- Spinner -->
-          <div
-            class="absolute inset-0 border-4 border-t-blue-600 border-t-transparent rounded-full animate-spin"
-          ></div>
+        <div id="secrets-list" class="mt-8 space-y-6"></div>
+
+        <div id="spinner" class="flex items-center justify-center mt-8">
+          <div class="relative w-12 h-12">
+            <!-- Outer circle -->
+            <div
+              class="absolute inset-0 border-4 border-blue-600 rounded-full opacity-25"
+            ></div>
+            <!-- Spinner -->
+            <div
+              class="absolute inset-0 border-4 border-t-blue-600 border-t-transparent rounded-full animate-spin"
+            ></div>
+          </div>
         </div>
       </div>
-
-      <div id="secrets-list" class="mt-8 space-y-6 absolute"></div>
     </div>
 
     <!-- Modal for Adding Secret -->

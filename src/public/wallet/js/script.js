@@ -16,6 +16,7 @@ const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
 const spinner = document.getElementById("spinner");
 let secretToDelete = null;
 
+
 function displaySecrets(secrets) {
   if (secrets.length > 0) {
     secretsList.innerHTML = secrets
@@ -25,9 +26,7 @@ function displaySecrets(secrets) {
         const censoredSecretValue = secretValue.replace(/./g, "●");
 
         return `
-          <div id="${
-            secret.secretId
-          }" class="p-6 bg-gray-100 rounded-lg shadow-md mb-6">
+          <div id="${secret.secretId}" class="p-6 bg-gray-100 rounded-lg shadow-md mb-6">
             <!-- Secret Name -->
             <div class="mb-4">
               <h3 class="text-lg font-bold text-blue-600">Name</h3>
@@ -50,32 +49,25 @@ function displaySecrets(secrets) {
                 onclick="toggleSecret('${secret.secretId}')" 
                 class="absolute top-[50px] right-16 transform -translate-y-1/2 text-blue-600 hover:text-blue-800"
               >
-                <img id="eye-icon-${
-                  secret.secretId
-                }" src="svg/eye.svg" alt="View" class="w-6 h-6">
+                <img id="eye-icon-${secret.secretId}" src="svg/eye.svg" alt="View" class="w-6 h-6">
               </button>
               <button 
-                onclick="copySecretValue('${secretValue}', '${
-          secret.secretId
-        }')"
+                onclick="copySecretValue('${secretValue}', '${secret.secretId}')"
                 class="absolute top-[50px] right-4 transform -translate-y-1/2 text-blue-600 hover:text-blue-800"
               >
-                <img id="copy-icon-${
-                  secret.secretId
-                }" src="svg/copy.svg" alt="Copy" class="w-6 h-6">
+                <img id="copy-icon-${secret.secretId}" src="svg/copy.svg" alt="Copy" class="w-6 h-6">
               </button>
-            </div>${
-              secretDescription
-                ? `
+            </div>
+
+            <!-- Secret Description -->
+            ${secretDescription ? `
               <div class="mb-4">
                 <h3 class="text-lg font-bold text-blue-600">Description</h3>
                 <p class="text-gray-800 bg-white px-4 py-2 rounded-lg border shadow-sm max-h-40 overflow-y-auto whitespace-pre-line w-5/6">
                   ${secretDescription}
                 </p>
               </div>
-            `
-                : ""
-            }
+            ` : ""}
 
             <!-- Delete Button -->
             <div class="flex justify-end">
@@ -99,6 +91,7 @@ function displaySecrets(secrets) {
   }
 }
 
+
 function filterSecrets() {
   const searchQuery = document.getElementById("search-bar").value.toLowerCase();
   const filteredSecrets = secrets.filter(
@@ -109,6 +102,7 @@ function filterSecrets() {
 
   displaySecrets(filteredSecrets);
 }
+
 
 function toggleSecret(secretId) {
   const secretValueElement = document.getElementById(
