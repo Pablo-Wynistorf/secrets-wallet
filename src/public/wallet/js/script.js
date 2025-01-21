@@ -34,7 +34,7 @@ function displaySecrets(secrets) {
             </div>
 
             <!-- Secret Value -->
-            <div class="mb-4 relative">
+            <div class="mb-4">
               <h3 class="text-lg font-bold text-blue-600">Secret Value</h3>
               <p 
                 id="secret-value-${secret.secretId}" 
