@@ -20,11 +20,14 @@ function displaySecrets(secrets) {
   if (secrets.length > 0) {
     secretsList.innerHTML = secrets
       .map((secret) => {
-        const { secretName, secretValue, secretDescription } = secret.secretValue;
+        const { secretName, secretValue, secretDescription } =
+          secret.secretValue;
         const censoredSecretValue = secretValue.replace(/./g, "●");
 
         return `
-          <div id="${secret.secretId}" class="p-6 bg-gray-100 rounded-lg shadow-md mb-6">
+          <div id="${
+            secret.secretId
+          }" class="p-6 bg-gray-100 rounded-lg shadow-md mb-6">
             <!-- Secret Name -->
             <div class="mb-4">
               <h3 class="text-lg font-bold text-blue-600">Name</h3>
@@ -47,13 +50,19 @@ function displaySecrets(secrets) {
                 onclick="toggleSecret('${secret.secretId}')" 
                 class="absolute top-[50px] right-16 transform -translate-y-1/2 text-blue-600 hover:text-blue-800"
               >
-                <img id="eye-icon-${secret.secretId}" src="svg/eye.svg" alt="View" class="w-6 h-6">
+                <img id="eye-icon-${
+                  secret.secretId
+                }" src="svg/eye.svg" alt="View" class="w-6 h-6">
               </button>
               <button 
-                onclick="copySecretValue('${secretValue}', '${secret.secretId}')"
+                onclick="copySecretValue('${secretValue}', '${
+          secret.secretId
+        }')"
                 class="absolute top-[50px] right-4 transform -translate-y-1/2 text-blue-600 hover:text-blue-800"
               >
-                <img id="copy-icon-${secret.secretId}" src="svg/copy.svg" alt="Copy" class="w-6 h-6">
+                <img id="copy-icon-${
+                  secret.secretId
+                }" src="svg/copy.svg" alt="Copy" class="w-6 h-6">
               </button>
             </div>
 
@@ -90,9 +99,22 @@ function displaySecrets(secrets) {
   }
 }
 
+function filterSecrets() {
+  const searchQuery = document.getElementById("search-bar").value.toLowerCase();
+  const filteredSecrets = secrets.filter(
+    (secret) =>
+      secret.secretValue.secretName.toLowerCase().includes(searchQuery) ||
+      secret.secretValue.secretDescription.toLowerCase().includes(searchQuery)
+  );
+
+  displaySecrets(filteredSecrets);
+}
+
 
 function toggleSecret(secretId) {
-  const secretValueElement = document.getElementById(`secret-value-${secretId}`);
+  const secretValueElement = document.getElementById(
+    `secret-value-${secretId}`
+  );
   const eyeIcon = document.getElementById(`eye-icon-${secretId}`);
 
   const originalSecretValue = secretValueElement.dataset.secretValue;
@@ -108,7 +130,6 @@ function toggleSecret(secretId) {
     eyeIcon.alt = "View";
   }
 }
-
 
 function copySecretValue(secretValue, secretId) {
   const copyIcon = document.getElementById(`copy-icon-${secretId}`);
@@ -143,7 +164,6 @@ async function fetchSecrets() {
   }
 }
 
-
 function showDeleteModal(secretId) {
   secretToDelete = secretId;
   confirmDeleteBtn.removeEventListener("click", handleDelete);
@@ -151,17 +171,14 @@ function showDeleteModal(secretId) {
   deleteModal.classList.remove("hidden");
 }
 
-
 function handleDelete() {
   deleteSecret(secretToDelete);
 }
-
 
 function hideDeleteModal() {
   deleteModal.classList.add("hidden");
   secretToDelete = null;
 }
-
 
 async function deleteSecret(secretToDelete) {
   if (!secretToDelete) {
@@ -193,17 +210,19 @@ async function deleteSecret(secretToDelete) {
       hideDeleteModal();
     } else {
       const errorData = await response.json();
-      const errorMessage = errorData.error || "Failed to delete secret. Please try again.";
+      const errorMessage =
+        errorData.error || "Failed to delete secret. Please try again.";
       displayErrorMessage(errorMessage);
     }
   } catch (error) {
-    displayErrorMessage("An error occurred. Please check your network connection.");
+    displayErrorMessage(
+      "An error occurred. Please check your network connection."
+    );
   } finally {
     confirmDeleteBtn.disabled = false;
     confirmDeleteBtn.textContent = "Delete";
   }
 }
-
 
 exportSecretsBtn.addEventListener("click", () => {
   const secretsToExport = secrets.map((secret) => {
@@ -211,13 +230,15 @@ exportSecretsBtn.addEventListener("click", () => {
     return { secretName, secretValue, secretDescription };
   });
 
-  const data = new Blob([JSON.stringify(secretsToExport)], { type: "application/json" });
+  const data = new Blob([JSON.stringify(secretsToExport)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(data);
   const a = document.createElement("a");
   a.href = url;
   a.download = "secrets.json";
   a.click();
-  
+
   displaySuccessMessage("Secrets exported successfully!");
 });
 
@@ -247,7 +268,8 @@ importFileInput.addEventListener("change", async (event) => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          const errorMessage = errorData.error || "Failed to import secret. Please try again.";
+          const errorMessage =
+            errorData.error || "Failed to import secret. Please try again.";
           displayErrorMessage(errorMessage);
           return;
         }
@@ -256,14 +278,15 @@ importFileInput.addEventListener("change", async (event) => {
       displaySuccessMessage("Secrets imported successfully!");
       setTimeout(fetchSecrets, 2000);
     } catch (error) {
-      displayErrorMessage("An error occurred. Please check your network connection.");
+      displayErrorMessage(
+        "An error occurred. Please check your network connection."
+      );
     }
   };
 
   reader.readAsText(file);
   event.target.value = null;
 });
-
 
 addSecretForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -292,14 +315,16 @@ addSecretForm.addEventListener("submit", async (event) => {
       setTimeout(fetchSecrets, 2000);
     } else {
       const errorData = await response.json();
-      const errorMessage = errorData.error || "Secret addition failed. Please try again.";
+      const errorMessage =
+        errorData.error || "Secret addition failed. Please try again.";
       displayErrorMessage(errorMessage);
     }
   } catch (error) {
-    displayErrorMessage("An error occurred. Please check your network connection.");
+    displayErrorMessage(
+      "An error occurred. Please check your network connection."
+    );
   }
 });
-
 
 function displaySuccessMessage(message) {
   new Noty({
@@ -320,8 +345,6 @@ function displayErrorMessage(error) {
     timeout: 3000,
   }).show();
 }
-
-
 
 addSecretBtn.addEventListener("click", () =>
   addModal.classList.remove("hidden")
