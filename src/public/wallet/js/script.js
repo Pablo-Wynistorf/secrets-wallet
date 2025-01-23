@@ -23,7 +23,7 @@ function displaySecrets(secrets) {
       .map((secret) => {
         const { secretName, secretValue, secretDescription } =
           secret.secretValue;
-        const censoredSecretValue = secretValue.replace(/./g, "●");
+        const censoredSecretValue = "●●●●●●●"
 
         return `
           <div id="${secret.secretId}" class="p-6 bg-gray-100 rounded-lg shadow-md mb-6">
